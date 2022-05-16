@@ -3,6 +3,7 @@ const cartIcon = document.getElementById("cart")
  const cartCon = document.getElementsByClassName("cartList")[0]
 const cartList = document.createElement("div")
 const cat = document.getElementsByClassName("catCon")
+
 cartList.classList.add("cartList")
 const dv = document.createElement("div")
 dv.classList.add("redCircle")
@@ -10,20 +11,25 @@ let posterItems = [];
 let counter = 0;
 let btnbool = true
 const list = document.getElementById("list");
-
+// -------------- all products -----------------
 fetch('https://fakestoreapi.com/products')
-            .then(res=>res.json())
+            .then((res)=>{
+                console.log("unshij baina")
+                return res.json();
+                
+            })
             .then(data =>{
                 data.forEach(el=>{
                     el.count = 0;
                     posterItems.push(el)
                 })
-                showList(data);
+                console.log("unshij duusla")
             })
   .catch((err) => console.log("Err:", err));
-
+// -------------- show products -----------------
   function showList(posterItems){
     const postCon = document.getElementById("posterItems")
+   
     let items = ""
     posterItems.forEach((element,i) =>{
         items += 
@@ -37,19 +43,14 @@ fetch('https://fakestoreapi.com/products')
     postCon.innerHTML = items;
         connectListener()
 }
-
+// -------------- category button -----------------
 for(let i of cat ){
     i.addEventListener("click",()=>{
         if(i.textContent == "All Products"){
-            fetch('https://fakestoreapi.com/products')
-            .then(res=>res.json())
-            .then(showList)
-  .catch((err) => console.log("Err:", err));
+            showList(posterItems)
         }else{
-            fetch('https://fakestoreapi.com/products/category/'+i.textContent.toLocaleLowerCase())
-                .then(res=>res.json())
-                .then(showList)
-      .catch((err) => console.log("Err:", err));
+            const filteredItems = posterItems.filter((item)=>item.category ==i.textContent.toLowerCase())
+                showList(filteredItems)
   }
   for(let j of cat){
     if(j.classList.contains("activeCat")){
@@ -59,6 +60,7 @@ for(let i of cat ){
   i.classList.toggle("activeCat")
     })
 }
+
 function connectListener(){
     const btns = document.getElementsByClassName("cartbtn");
     for(let i of btns){
@@ -70,6 +72,7 @@ function connectListener(){
         })
     }
 }
+// -------------- cart products -----------------
 function drawCartCon(){
     let items = '';
     let total = 0;
@@ -111,6 +114,7 @@ function drawCartCon(){
     }
   cartCon.innerHTML = items;
 }
+// -------------- cart counter -----------------
 function cartCorner(){
     if(counter>0){
         dv.innerHTML = counter
@@ -119,11 +123,13 @@ function cartCorner(){
         dv.remove();
     }
 }
+
 cartIcon.addEventListener('click', () => {
     drawCartCon();
 cartCon.classList.toggle("off")
 cartIcon.classList.toggle("back")
 })
+
 function plusSubBtn(i,t){
     if(t){
         counter++;
@@ -137,9 +143,12 @@ function plusSubBtn(i,t){
     cartCorner()
     drawCartCon();
 }
+
 function removeItem(i){
     counter-=posterItems[i].count;
     posterItems[i].count=0;
     cartCorner()
     drawCartCon();
 }
+
+        
